@@ -72,7 +72,23 @@ async function run() {
             const result = await itemsCollection.updateOne(query, updateDoc, options)
             res.send(result);
         })
+// deliver update
 
+app.put('/deliver/:id', async (req, res) => {
+    const id = req.params.id
+    const updateQuantity = req.body
+    console.log(updateQuantity);
+    const query = { _id: ObjectId(id) }
+    const options = { upsert: true };
+    const updateDoc = {
+        $set: {
+            quantity: updateItem.quantity
+        }
+    }
+
+    const result = await itemsCollection.updateOne(query, updateDoc, options)
+    res.send(result);
+})
            //delete 
            app.delete('/items/:id', async (req, res) => {
             const id = req.params.id;
