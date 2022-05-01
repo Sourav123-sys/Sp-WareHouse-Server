@@ -28,6 +28,17 @@ async function run() {
         const itemsCollection = client.db('SP-Warehouse').collection('items')
         console.log("sp db connected")
 
+
+
+// get items from db
+app.get('/items', async (req, res) => {
+    const query = {}
+    const cursor = itemsCollection .find(query)
+
+    const items = await cursor.toArray()
+    res.send(items)
+})
+
        
     }
     finally {
