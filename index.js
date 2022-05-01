@@ -28,18 +28,58 @@ async function run() {
         const itemsCollection = client.db('SP-Warehouse').collection('items')
         console.log("sp db connected")
 
+   // add a new item in db
+   app.post('/item', async (req, res) => {
 
-
-// get items from db
-app.get('/items', async (req, res) => {
-    const query = {}
-    const cursor = itemsCollection .find(query)
-
-    const items = await cursor.toArray()
-    res.send(items)
+    const newItem = req.body;
+    console.log("adding new user", newUser)
+    const result = await itemsCollection.insertOne(newItem);
+    res.send(result)
 })
 
-       
+        // get items from db
+        app.get('/items', async (req, res) => {
+            const query = {}
+            const cursor = itemsCollection.find(query)
+
+            const items = await cursor.toArray()
+            res.send(items)
+        })
+
+        // get by id
+        app.get('/items/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const item = await itemsCollection.findOne(query)
+            res.send(item)
+        })
+
+        //update
+        app.put('/items/:id', async (req, res) => {
+            const id = req.params.id
+            const updateItem = req.body
+            console.log(updateItem);
+            const query = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    name: updateItem.name,
+                    img: updateItem.img,
+                    quantity: updateItem.quantity
+                }
+            }
+
+            const result = await itemsCollection.updateOne(query, updateDoc, options)
+            res.send(result);
+        })
+
+           //delete 
+           app.delete('/items/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await itemsCollection.deleteOne(query)
+            res.send(result);
+        })
     }
     finally {
 
