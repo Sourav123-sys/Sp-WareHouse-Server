@@ -63,8 +63,7 @@ async function run() {
             const options = { upsert: true };
             const updateDoc = {
                 $set: {
-                    name: updateItem.name,
-                    img: updateItem.img,
+                   
                     quantity: updateItem.quantity
                 }
             }
@@ -74,15 +73,16 @@ async function run() {
         })
 // deliver update
 
-app.put('/deliver/:id', async (req, res) => {
+app.put('/items/deliver/:id', async (req, res) => {
     const id = req.params.id
-    const updateQuantity = req.body
-    console.log(updateQuantity);
+    const newQuantity = req.body
+    const deliver = newQuantity.quantityUpdate-1
+   // console.log(newQuantity.quantityUpdate-1,'ss');
     const query = { _id: ObjectId(id) }
     const options = { upsert: true };
     const updateDoc = {
         $set: {
-            quantity: updateItem.quantity
+            quantity: deliver
         }
     }
 
