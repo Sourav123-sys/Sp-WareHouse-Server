@@ -32,7 +32,7 @@ async function run() {
    app.post('/item', async (req, res) => {
 
     const newItem = req.body;
-    console.log("adding new user", newUser)
+    
     const result = await itemsCollection.insertOne(newItem);
     res.send(result)
 })
