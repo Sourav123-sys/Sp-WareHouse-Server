@@ -14,12 +14,36 @@ const jwt = require('jsonwebtoken');
 app.use(bodyParser.json())
 app.use(cors())
 
+
+function checkJwt(req, res, next) {
+    const hederAuth = req.headers.authorization
+    if (!hederAuth) {
+        return res.status(401).send({ message: 'unauthorized access.try again' })
+    }
+    else {
+        const token = hederAuth.split(' ')[1]
+        console.log({token});
+        jwt.verify(token,process.env.ACCESS_JWT_TOKEN, (err, decoded) => {
+            if (err) {
+                console.log(err);
+                return res.status(403).send({ message: 'forbidden access' })
+            }
+            console.log('decoded', decoded);
+            req.decoded = decoded;
+            next()
+        })
+    }
+    console.log(hederAuth, 'inside chckjwt');
+   
+}
+
+
 //connect to db
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.eowzq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-
+console.log(process.env.ACCESS_JWT_TOKEN);
 
 async function run() {
     try {
@@ -27,6 +51,23 @@ async function run() {
         await client.connect();
         const itemsCollection = client.db('SP-Warehouse').collection('items')
         console.log("sp db connected")
+
+
+
+
+        app.post('/signin', async (req, res) => {
+            const user = req.body;
+            console.log(req.body,'user')
+            
+            const getToken = jwt.sign(user, process.env.ACCESS_JWT_TOKEN, {
+                expiresIn: '1d'
+            });
+           
+            res.send({ getToken });
+
+        })
+
+
 
    // add a new item in db
    app.post('/item', async (req, res) => {
@@ -95,6 +136,20 @@ app.put('/items/deliver/:id', async (req, res) => {
             const query = { _id: ObjectId(id) }
             const result = await itemsCollection.deleteOne(query)
             res.send(result);
+           })
+           // get items by email 
+           app.get('/singleItem', checkJwt, async (req, res) => {
+            const decodedEmail = req.decoded.email
+            const email = req.query.email
+            if (email === decodedEmail) {
+                const query = { email: email }
+            const cursor = itemsCollection.find(query)
+            const items = await cursor.toArray()
+            res.send(items)
+            }
+            else {
+                return res.status(403).send({ message: 'forbidden access' })
+            }
         })
     }
     finally {
