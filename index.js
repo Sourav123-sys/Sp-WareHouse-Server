@@ -83,8 +83,8 @@ async function run() {
             const query = {}
             const cursor = itemsCollection.find(query)
 
-            const items = await cursor.toArray()
-            res.send(items)
+            const allItems = await cursor.toArray()
+            res.send(allItems)
         })
 
         // get by id
