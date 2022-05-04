@@ -113,7 +113,7 @@ async function run() {
         })
 // deliver update
 
-app.put('/items/deliver/:id', async (req, res) => {
+app.put('/deliver/:id', async (req, res) => {
     const id = req.params.id
     const newQuantity = req.body
     const deliver = newQuantity.quantityUpdate-1
