@@ -53,7 +53,7 @@ async function run() {
         console.log("sp db connected")
 
 
-
+//token
 
         app.post('/signin', async (req, res) => {
             const user = req.body;
@@ -66,6 +66,7 @@ async function run() {
             res.send({ getToken });
 
         })
+     
 
 
 
