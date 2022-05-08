@@ -12,7 +12,13 @@ const jwt = require('jsonwebtoken');
 
 //middleware
 app.use(bodyParser.json())
-app.use(cors())
+//app.use(cors())
+const corsConfig = {
+    origin: true,
+    credentials: true,
+  }
+  app.use(cors(corsConfig))
+  app.options('*', cors(corsConfig))
 
 
 function checkJwt(req, res, next) {
