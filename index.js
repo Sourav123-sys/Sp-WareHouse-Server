@@ -117,13 +117,16 @@ async function run() {
 app.put('/deliver/:id', async (req, res) => {
     const id = req.params.id
     const newQuantity = req.body
-    const deliver = newQuantity.quantityUpdate-1
-   // console.log(newQuantity.quantityUpdate-1,'ss');
+//     console.log(newQuantity,'body');
+//     const deliver = newQuantity.quantityUpdate - 1
+//     //const soldItem = newQuantity.soldUpdate + 1
+//    // console.log(newQuantity.quantityUpdate-1,'ss');
     const query = { _id: ObjectId(id) }
     const options = { upsert: true };
     const updateDoc = {
         $set: {
-            quantity: deliver
+            quantity: newQuantity.quantityUpdate,
+            sold: newQuantity.soldUpdate 
         }
     }
 
@@ -150,7 +153,13 @@ app.put('/deliver/:id', async (req, res) => {
             else {
                 return res.status(403).send({ message: 'forbidden access' })
             }
-        })
+           })
+        
+
+
+
+
+        
     }
     finally {
 
